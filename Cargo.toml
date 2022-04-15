@@ -1,0 +1,39 @@
+[package]
+name = "hamming_rs"
+version = "0.1.0"
+edition = "2021"
+authors = ["Regis Portalez <info@example.com>"]
+
+license-file = "LICENSE"
+keywords = ["popcount", "hamming", "bithack"]
+homepage = "https://github.com/huonw/hamming"
+repository = "https://github.com/huonw/hamming"
+documentation = "https://docs.rs/hamming/"
+
+description = """
+Computes Hamming distance -- possibly with avx/avx2 instructions if available
+"""
+
+
+[dependencies]
+
+[dev-dependencies]
+rand = "0.8.5"
+hamming = "0.1.2"
+criterion = "0.3.5"
+
+[profile.dev]
+opt-level = 0              # Use slightly better optimizations.
+overflow-checks = true     
+
+
+[profile.release]
+debug-assertions = false
+debug = false
+opt-level = 3              # Use slightly better optimizations.
+overflow-checks = false     # Disable integer overflow checks.
+
+
+[[bench]]
+name = "distance"
+harness = false
