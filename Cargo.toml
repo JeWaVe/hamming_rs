@@ -11,6 +11,9 @@ documentation = "https://docs.rs/hamming_rs/"
 readme = "README.md"
 exclude = [
     "target/criterion/*",
+    ".cargo_vcs_info.json",
+    ".gitignore",
+    "Cargo.toml.orig",
 ]
 
 description = """
