@@ -26,6 +26,7 @@ unsafe fn count(v: __m256i) -> __m256i {
     _mm256_sad_epu8(total, _mm256_setzero_si256())
 }
 
+#[target_feature(enable = "avx2")]
 unsafe fn avx2_harvey_seal_popcnt(x: *const __m256i, y: *const __m256i, size: usize) -> u64 {
     let mut total = _mm256_setzero_si256();
     let mut ones = _mm256_setzero_si256();
@@ -122,8 +123,6 @@ unsafe fn avx2_harvey_seal_popcnt(x: *const __m256i, y: *const __m256i, size: us
 #[target_feature(enable = "avx2")]
 pub unsafe fn distance_vect(x: &[u8], y: &[u8]) -> u64 {
     assert_eq!(x.len(), y.len());
-    assert_eq!(x.as_ptr() as usize & 65536, 0);
-    assert_eq!(y.as_ptr() as usize & 65536, 0);
     let mut accum = 0;
     let (x_head, x_mid, x_tail) = x.align_to::<__m256i>();
     let (y_head, y_mid, y_tail) = y.align_to::<__m256i>();
@@ -152,14 +151,4 @@ pub unsafe fn distance_vect(x: &[u8], y: &[u8]) -> u64 {
     accum += super::distance_faster(x_final, y_final);
 
     accum
-}
-
-#[target_feature(enable = "avx2")]
-pub unsafe fn distance_vect_assume_all(x: &[u8], y: &[u8]) -> u64 {
-    assert_eq!(x.len(), y.len());
-
-    let x_ptr_avx = x.as_ptr() as *const __m256i;
-    let y_ptr_avx = y.as_ptr() as *const __m256i;
-
-    avx2_harvey_seal_popcnt(x_ptr_avx, y_ptr_avx, x.len() / 32)
 }

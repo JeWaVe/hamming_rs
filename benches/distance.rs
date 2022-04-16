@@ -1,22 +1,13 @@
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 
-fn random_vector(x: &mut [u8]) {
-    for i in 0..x.len() {
-        x[i] = rand::random()
+unsafe fn random_vector<'a>(x: *mut u8, len: usize) {
+    for i in 0..len {
+        *x.add(i) = rand::random();
     }
 }
 
 extern "C" {
     fn aligned_alloc(alignment: usize, size: usize) -> *mut u8;
-}
-
-unsafe fn aligned_vector(s: usize) -> Vec<u8> {
-    let ptr = aligned_alloc(64, s);
-    //println!("before : {:?}", ptr);
-    let result = std::vec::Vec::from_raw_parts(ptr, s, s);
-    //println!("after  : {:?}", result.as_ptr());
-
-    result
 }
 
 fn bench_fibs(c: &mut Criterion) {
@@ -41,20 +32,18 @@ fn bench_fibs(c: &mut Criterion) {
     let mut group = c.benchmark_group("distance");
     for s in sizes.iter() {
         unsafe {
-            let mut x = aligned_vector(*s);
-            random_vector(&mut x);
-            let mut y = aligned_vector(*s);
-            random_vector(&mut y);
-            group.bench_with_input(
-                BenchmarkId::new("local", s),
-                &(x.clone(), y.clone()),
-                |b, data| b.iter(|| black_box(hamming_rs::distance(&data.0, &data.1))),
-            );
-            group.bench_with_input(
-                BenchmarkId::new("reference", s),
-                &(x.clone(), y.clone()),
-                |b, data| b.iter(|| black_box(hamming::distance_fast(&data.0, &data.1))),
-            );
+            let x = aligned_alloc(256, *s);
+            random_vector(x, *s);
+            let y = aligned_alloc(256, *s);
+            random_vector(y, *s);
+            let xx = std::slice::from_raw_parts(x, *s);
+            let yy = std::slice::from_raw_parts(x, *s);
+            group.bench_with_input(BenchmarkId::new("local", s), &(xx, yy), |b, data| {
+                b.iter(|| black_box(hamming_rs::distance(&data.0, &data.1)))
+            });
+            group.bench_with_input(BenchmarkId::new("reference", s), &(xx, yy), |b, data| {
+                b.iter(|| black_box(hamming::distance_fast(&data.0, &data.1)))
+            });
         }
     }
     group.finish();
