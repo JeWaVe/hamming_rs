@@ -3,15 +3,15 @@ name = "hamming_rs"
 version = "0.1.0"
 edition = "2021"
 authors = ["Regis Portalez <info@example.com>"]
-
 license-file = "LICENSE"
-keywords = ["popcount", "hamming", "bithack"]
-homepage = "https://github.com/huonw/hamming"
-repository = "https://github.com/huonw/hamming"
-documentation = "https://docs.rs/hamming/"
+keywords = ["popcount", "hamming", "avx2"]
+homepage = "https://github.com/JeWaVe/hamming_rs"
+repository = "https://github.com/JeWaVe/hamming_rs"
+documentation = "https://docs.rs/hamming_rs/"
+readme = "README.md"
 
 description = """
-Computes Hamming distance -- possibly with avx/avx2 instructions if available
+Computes Hamming distance -- if available, uses a highly optimized avx2 implementation
 """
 
 
