@@ -1,15 +1,26 @@
-fn random_vector(x: &mut [u8]) {
-    for i in 0..x.len() {
-        x[i] = rand::random()
+unsafe fn random_data(x: *mut u8, len: usize) {
+    for i in 0..len {
+        *x.add(i) = rand::random();
+    }
+}
+
+// TODO: arch checks and windows version
+extern "C" {
+    fn aligned_alloc(alignment: usize, size: usize) -> *mut u8;
+}
+
+fn random_slice<'a>(size: usize) -> &'a [u8] {
+    unsafe {
+        let ptr = aligned_alloc(64, size);
+        random_data(ptr, size);
+        return std::slice::from_raw_parts(ptr, size);
     }
 }
 
 #[test]
 pub fn test_naive() {
-    let mut x = [0; 12];
-    let mut y = [0; 12];
-    random_vector(&mut x);
-    random_vector(&mut y);
+    let x = random_slice(12);
+    let y = random_slice(12);
     let a = super::distance_naive(&x, &y);
     let b = hamming::distance(&x, &y);
     assert_eq!(a, b);
@@ -18,10 +29,8 @@ pub fn test_naive() {
 #[test]
 pub fn test_faster() {
     unsafe {
-        let mut x = [0; 12];
-        let mut y = [0; 12];
-        random_vector(&mut x);
-        random_vector(&mut y);
+        let x = random_slice(12);
+        let y = random_slice(12);
         let a = super::distance_faster(&x, &y);
         let b = hamming::distance(&x, &y);
         assert_eq!(a, b);
@@ -31,10 +40,8 @@ pub fn test_faster() {
 #[test]
 pub fn test_faster_2() {
     unsafe {
-        let mut x = [0; 16];
-        let mut y = [0; 16];
-        random_vector(&mut x);
-        random_vector(&mut y);
+        let x = random_slice(16);
+        let y = random_slice(16);
         let a = super::distance_faster(&x, &y);
         let b = hamming::distance(&x, &y);
         assert_eq!(a, b);
@@ -44,10 +51,8 @@ pub fn test_faster_2() {
 #[test]
 pub fn test_faster_3() {
     unsafe {
-        let mut x = [0; 4];
-        let mut y = [0; 4];
-        random_vector(&mut x);
-        random_vector(&mut y);
+        let x = random_slice(4);
+        let y = random_slice(4);
         let a = super::distance_faster(&x, &y);
         let b = hamming::distance(&x, &y);
         assert_eq!(a, b);
@@ -57,10 +62,8 @@ pub fn test_faster_3() {
 #[test]
 pub fn test_faster_4() {
     unsafe {
-        let mut x = [0; 32];
-        let mut y = [0; 32];
-        random_vector(&mut x);
-        random_vector(&mut y);
+        let x = random_slice(32);
+        let y = random_slice(32);
         let a = super::distance_faster(&x, &y);
         let b = hamming::distance(&x, &y);
         assert_eq!(a, b);
@@ -69,10 +72,8 @@ pub fn test_faster_4() {
 
 #[test]
 pub fn test_avx() {
-    let mut x = [0; 1024];
-    let mut y = [0; 1024];
-    random_vector(&mut x);
-    random_vector(&mut y);
+    let x = random_slice(1024);
+    let y = random_slice(1024);
     let a = super::distance(&x, &y);
     let b = hamming::distance(&x, &y);
     assert_eq!(a, b);
@@ -80,10 +81,8 @@ pub fn test_avx() {
 
 #[test]
 pub fn test_avx_2() {
-    let mut x = [0; 12];
-    let mut y = [0; 12];
-    random_vector(&mut x);
-    random_vector(&mut y);
+    let x = random_slice(12);
+    let y = random_slice(12);
     let a = super::distance(&x, &y);
     let b = hamming::distance(&x, &y);
     assert_eq!(a, b);
@@ -91,10 +90,8 @@ pub fn test_avx_2() {
 
 #[test]
 pub fn test_avx_3() {
-    let mut x = [0; 128];
-    let mut y = [0; 128];
-    random_vector(&mut x);
-    random_vector(&mut y);
+    let x = random_slice(128);
+    let y = random_slice(128);
     let a = super::distance(&x, &y);
     let b = hamming::distance(&x, &y);
     assert_eq!(a, b);

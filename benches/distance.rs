@@ -1,6 +1,6 @@
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 
-unsafe fn random_vector<'a>(x: *mut u8, len: usize) {
+unsafe fn random_vector(x: *mut u8, len: usize) {
     for i in 0..len {
         *x.add(i) = rand::random();
     }
