@@ -9,6 +9,9 @@ homepage = "https://github.com/JeWaVe/hamming_rs"
 repository = "https://github.com/JeWaVe/hamming_rs"
 documentation = "https://docs.rs/hamming_rs/"
 readme = "README.md"
+exclude = [
+    "target/criterion/*",
+]
 
 description = """
 Computes Hamming distance -- if available, uses a highly optimized avx2 implementation
