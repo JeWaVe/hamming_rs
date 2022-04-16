@@ -1,5 +1,6 @@
 use std::is_x86_feature_detected;
 
+/// Computes hamming distance (naive version)
 pub(crate) fn distance_naive(x: &[u8], y: &[u8]) -> u64 {
     assert_eq!(x.len(), y.len());
     let mut accum: u64 = 0;
@@ -10,6 +11,9 @@ pub(crate) fn distance_naive(x: &[u8], y: &[u8]) -> u64 {
     accum
 }
 
+/// Computes hamming distance
+/// Assumes x and y have same length
+/// slightly faster than naive version
 pub(crate) unsafe fn distance_faster(x: &[u8], y: &[u8]) -> u64 {
     assert_eq!(x.len(), y.len());
     let mut accum: u64 = 0;
@@ -32,6 +36,9 @@ pub(crate) unsafe fn distance_faster(x: &[u8], y: &[u8]) -> u64 {
     accum
 }
 
+/// Computes hamming distance
+/// Assumes x and y have same memory alignemet
+/// Uses highly optimized avx2 versio if available
 pub fn distance(x: &[u8], y: &[u8]) -> u64 {
     assert_eq!(x.len(), y.len());
     unsafe {
