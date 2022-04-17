@@ -10,7 +10,7 @@ extern "C" {
     fn aligned_alloc(alignment: usize, size: usize) -> *mut u8;
 }
 
-fn bench_fibs(c: &mut Criterion) {
+fn bench_dist(c: &mut Criterion) {
     const KB: usize = 1024;
     let sizes = [
         KB,
@@ -24,10 +24,6 @@ fn bench_fibs(c: &mut Criterion) {
         KB * 256,
         KB * 512,
         KB * 1024,
-        KB * 2048,
-        KB * 4096,
-        KB * 8192,
-        KB * 65536,
     ];
     let mut group = c.benchmark_group("distance");
     for s in sizes.iter() {
@@ -49,5 +45,41 @@ fn bench_fibs(c: &mut Criterion) {
     group.finish();
 }
 
-criterion_group!(benches, bench_fibs);
+fn bench_weight(c: &mut Criterion) {
+    const KB: usize = 1024;
+    let sizes = [
+        KB,
+        KB * 2,
+        KB * 4,
+        KB * 8,
+        KB * 16,
+        KB * 32,
+        KB * 64,
+        KB * 128,
+        KB * 256,
+        KB * 512,
+        KB * 1024,
+    ];
+    let mut group = c.benchmark_group("weight");
+    for s in sizes.iter() {
+        unsafe {
+            let x = aligned_alloc(256, *s);
+            random_vector(x, *s);
+            let xx = std::slice::from_raw_parts(x, *s);
+            group.bench_with_input(BenchmarkId::new("local", s), &xx, |b, data| {
+                b.iter(|| black_box(hamming_rs::weight(&data)))
+            });
+            group.bench_with_input(BenchmarkId::new("reference", s), &xx, |b, data| {
+                b.iter(|| black_box(hamming::weight(&data)))
+            });
+        }
+    }
+    group.finish();
+}
+
+criterion_group!(
+    name = benches;
+    config = Criterion::default();
+    targets = bench_dist, bench_weight);
+
 criterion_main!(benches);

@@ -1,6 +1,6 @@
 [package]
 name = "hamming_rs"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 authors = ["Regis Portalez <info@example.com>"]
 license-file = "LICENSE"
@@ -17,7 +17,7 @@ exclude = [
 ]
 
 description = """
-Computes Hamming distance -- if available, uses a highly optimized avx2 implementation
+Computes Hamming distance and weight -- if available, uses a highly optimized avx2 implementation
 """
 
 
@@ -38,7 +38,6 @@ debug-assertions = false
 debug = false
 opt-level = 3              # Use slightly better optimizations.
 overflow-checks = false     # Disable integer overflow checks.
-
 
 [[bench]]
 name = "distance"

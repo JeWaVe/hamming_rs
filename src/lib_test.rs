@@ -18,7 +18,7 @@ fn random_slice<'a>(size: usize) -> &'a [u8] {
 }
 
 #[test]
-pub fn test_naive() {
+pub fn test_dist_naive() {
     let x = random_slice(12);
     let y = random_slice(12);
     let a = super::distance_naive(&x, &y);
@@ -27,51 +27,51 @@ pub fn test_naive() {
 }
 
 #[test]
-pub fn test_faster() {
-    unsafe {
-        let x = random_slice(12);
-        let y = random_slice(12);
-        let a = super::distance_faster(&x, &y);
-        let b = hamming::distance(&x, &y);
-        assert_eq!(a, b);
-    }
+pub fn test_weight_naive() {
+    let x = random_slice(12);
+    let a = super::weight_naive(&x);
+    let b = hamming::weight(&x);
+    assert_eq!(a, b);
 }
 
 #[test]
-pub fn test_faster_2() {
-    unsafe {
-        let x = random_slice(16);
-        let y = random_slice(16);
-        let a = super::distance_faster(&x, &y);
-        let b = hamming::distance(&x, &y);
-        assert_eq!(a, b);
-    }
+pub fn test_dist_faster() {
+    let x = random_slice(12);
+    let y = random_slice(12);
+    let a = super::distance_faster(&x, &y);
+    let b = hamming::distance(&x, &y);
+    assert_eq!(a, b);
 }
 
 #[test]
-pub fn test_faster_3() {
-    unsafe {
-        let x = random_slice(4);
-        let y = random_slice(4);
-        let a = super::distance_faster(&x, &y);
-        let b = hamming::distance(&x, &y);
-        assert_eq!(a, b);
-    }
+pub fn test_dist_faster_2() {
+    let x = random_slice(16);
+    let y = random_slice(16);
+    let a = super::distance_faster(&x, &y);
+    let b = hamming::distance(&x, &y);
+    assert_eq!(a, b);
 }
 
 #[test]
-pub fn test_faster_4() {
-    unsafe {
-        let x = random_slice(32);
-        let y = random_slice(32);
-        let a = super::distance_faster(&x, &y);
-        let b = hamming::distance(&x, &y);
-        assert_eq!(a, b);
-    }
+pub fn test_dist_faster_3() {
+    let x = random_slice(4);
+    let y = random_slice(4);
+    let a = super::distance_faster(&x, &y);
+    let b = hamming::distance(&x, &y);
+    assert_eq!(a, b);
 }
 
 #[test]
-pub fn test_avx() {
+pub fn test_dist_faster_4() {
+    let x = random_slice(32);
+    let y = random_slice(32);
+    let a = super::distance_faster(&x, &y);
+    let b = hamming::distance(&x, &y);
+    assert_eq!(a, b);
+}
+
+#[test]
+pub fn test_dist_avx() {
     let x = random_slice(1024);
     let y = random_slice(1024);
     let a = super::distance(&x, &y);
@@ -80,7 +80,15 @@ pub fn test_avx() {
 }
 
 #[test]
-pub fn test_avx_2() {
+pub fn test_weight_avx() {
+    let x = random_slice(1024);
+    let a = super::weight(&x);
+    let b = hamming::weight(&x);
+    assert_eq!(a, b);
+}
+
+#[test]
+pub fn test_dist_avx_2() {
     let x = random_slice(12);
     let y = random_slice(12);
     let a = super::distance(&x, &y);
@@ -89,13 +97,30 @@ pub fn test_avx_2() {
 }
 
 #[test]
-pub fn test_avx_3() {
+pub fn test_weight_avx_2() {
+    let x = random_slice(12);
+    let a = super::weight(&x);
+    let b = hamming::weight(&x);
+    assert_eq!(a, b);
+}
+
+#[test]
+pub fn test_dist_avx_3() {
     let x = random_slice(128);
     let y = random_slice(128);
     let a = super::distance(&x, &y);
     let b = hamming::distance(&x, &y);
     assert_eq!(a, b);
 }
+
+#[test]
+pub fn test_weight_avx_3() {
+    let x = random_slice(128);
+    let a = super::weight(&x);
+    let b = hamming::weight(&x);
+    assert_eq!(a, b);
+}
+
 pub fn black_box<T>(dummy: T) -> T {
     unsafe {
         let ret = std::ptr::read_volatile(&dummy);
