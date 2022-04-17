@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["distance_vect",""]]});
+initSidebarItems({"fn":[["distance_vect",""],["weight_vect",""]]});

@@ -20,10 +20,9 @@ pub fn weight_naive(x: &[u8]) -> u64 {
     accum
 }
 
-/// Computes hammming weight (naive version)
-/// Computes hamming distance
-/// Assumes x and y have same length
-/// slightly faster than naive version
+/// Computes hamming distance  
+/// Assumes `x` and `y` have same length  
+/// slightly faster than naive version  
 pub fn distance_faster(x: &[u8], y: &[u8]) -> u64 {
     assert_eq!(x.len(), y.len());
     let mut accum: u64 = 0;
@@ -48,10 +47,22 @@ pub fn distance_faster(x: &[u8], y: &[u8]) -> u64 {
     accum
 }
 
-/// Computes hamming distance
-/// Assumes x and y have same memory alignment
-/// Uses highly optimized avx2 version if available
-/// fallback on [distance_faster] if [x] and [y] have different alignment
+/// Computes hamming distance  
+/// Assumes x and y have same memory alignment  
+/// Uses highly optimized avx2 version if available  
+/// fallback on [distance_faster] if `x` and `y` have different alignment or if avx2 features are not available
+/// # Arguments
+/// * `x` - a byte slice (prefer 32 byte alignment to get highest performance)
+/// * `y` - same
+///
+/// # Examples
+/// ```
+/// use hamming_rs::distance;
+/// let x: [u8] = [0, 1, 2, 3, 4];
+/// let y: [u8] = [0, 1, 3, 2, 4];
+/// let dist = distance(x, y);
+/// assert_eq!(2, dist);
+/// ```
 pub fn distance(x: &[u8], y: &[u8]) -> u64 {
     assert_eq!(x.len(), y.len());
     unsafe {
@@ -62,7 +73,7 @@ pub fn distance(x: &[u8], y: &[u8]) -> u64 {
     }
 }
 
-/// Computes hamming weight
+/// Computes hamming weight  
 /// Uses highly optimized avx2 version if available
 pub fn weight(x: &[u8]) -> u64 {
     unsafe {
