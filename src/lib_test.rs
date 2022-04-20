@@ -1,9 +1,18 @@
 use crate::utils;
+use rand::{distributions::Alphanumeric, Rng}; // 0.8
 
 unsafe fn random_data(x: *mut u8, len: usize) {
     for i in 0..len {
         *x.add(i) = rand::random();
     }
+}
+
+fn random_str(len: usize) -> String {
+    rand::thread_rng()
+        .sample_iter(&Alphanumeric)
+        .take(len)
+        .map(char::from)
+        .collect()
 }
 
 fn random_slice<'a>(size: usize) -> &'a [u8] {
@@ -118,10 +127,17 @@ pub fn test_weight_avx_3() {
     assert_eq!(a, b);
 }
 
-pub fn black_box<T>(dummy: T) -> T {
-    unsafe {
-        let ret = std::ptr::read_volatile(&dummy);
-        std::mem::forget(dummy);
-        ret
+#[test]
+pub fn test_jaro_winkler() {
+    for _ in 0..100 {
+        let x = random_str(12);
+        let y = random_str(12);
+        let a = super::jaro_winkler(x.as_bytes(), y.as_bytes());
+        let b = strsim::jaro_winkler(&x, &y) as f32;
+        let mut b_a = b - a;
+        if b_a < 0.0f32 {
+            b_a = -b_a;
+        }
+        assert_eq!(a, b);
     }
 }

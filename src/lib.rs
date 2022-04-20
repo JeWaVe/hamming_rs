@@ -1,3 +1,4 @@
+use core::cmp::{max, min};
 use std::is_x86_feature_detected;
 
 /// Computes hamming distance (naive version)
@@ -82,6 +83,68 @@ pub fn weight(x: &[u8]) -> u64 {
         }
         weight_naive(x)
     }
+}
+
+/// computes jaro-winkler distance - naive version
+pub fn jaro_winkler(x: &[u8], y: &[u8]) -> f32 {
+    let x_len = x.len();
+    let y_len = y.len();
+    if x_len == 0 && y_len == 0 {
+        return 1.0;
+    }
+    if x_len == 0 || y_len == 0 {
+        return 0.0;
+    }
+    if x_len == 1 && y_len == 1 {
+        if x[0] == y[0] {
+            return 1.0f32;
+        }
+        return 0.0f32;
+    }
+    let s = max(x_len, y_len) / 2 - 1;
+    let mut m = 0.0f32;
+    let mut t = 0.0f32;
+    let mut l = 0.0f32;
+    let mut i = 0;
+    // identify common prefix
+    loop {
+        if i >= 3 || i >= x_len || i >= y_len {
+            break;
+        }
+        if x[i] == y[i] {
+            l += 1.0;
+        } else {
+            break;
+        }
+        i += 1;
+    }
+
+    let mut m_s1 = vec![];
+    let mut m_s2 = vec![];
+    for i in 0..x_len {
+        let mut lower_bound = 0;
+        if i > s {
+            lower_bound = i - s;
+        }
+        for j in lower_bound..min(y_len, i + s) {
+            if x[i] == y[j] {
+                m_s1.push(x[i]);
+                m_s2.push(y[j]);
+                m += 1.0f32;
+            }
+        }
+    }
+
+    for i in 0..m_s1.len() {
+        if m_s1[i] != m_s2[i] {
+            t += 1.0f32;
+        }
+    }
+
+    t = t * 0.5f32;
+
+    let d_j = (m / x_len as f32 + m / y_len as f32 + (m - t) / m) / 3.0;
+    d_j + 0.1f32 * l * (1.0f32 - d_j)
 }
 
 /// avx2 target specific functions
