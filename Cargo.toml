@@ -1,6 +1,6 @@
 [package]
 name = "hamming_rs"
-version = "0.2.2"
+version = "0.2.21"
 edition = "2021"
 authors = ["Regis Portalez <info@example.com>"]
 license = "MIT"
@@ -26,6 +26,7 @@ Computes Hamming distance and weight -- if available, uses a highly optimized av
 [dev-dependencies]
 rand = "0.8.5"
 hamming = "0.1.2"
+strsim = "0.10.0"
 criterion = "0.3.5"
 
 [profile.dev]

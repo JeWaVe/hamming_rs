@@ -30,11 +30,14 @@ fn bench_dist(c: &mut Criterion) {
             random_vector(y, *s);
             let xx = std::slice::from_raw_parts(x, *s);
             let yy = std::slice::from_raw_parts(x, *s);
-            group.bench_with_input(BenchmarkId::new("local", s), &(xx, yy), |b, data| {
-                b.iter(|| black_box(hamming_rs::distance(&data.0, &data.1)))
+            group.bench_with_input(BenchmarkId::new("hamming_rs", s), &(xx, yy), |b, data| {
+                b.iter(|| black_box(hamming_rs::distance(data.0, data.1)))
             });
-            group.bench_with_input(BenchmarkId::new("reference", s), &(xx, yy), |b, data| {
-                b.iter(|| black_box(hamming::distance_fast(&data.0, &data.1)))
+            group.bench_with_input(BenchmarkId::new("hamming", s), &(xx, yy), |b, data| {
+                b.iter(|| black_box(hamming::distance_fast(data.0, data.1)))
+            });
+            group.bench_with_input(BenchmarkId::new("strsim", s), &(xx, yy), |b, data| {
+                b.iter(|| black_box(strsim::generic_hamming(data.0, data.1)))
             });
         }
     }
