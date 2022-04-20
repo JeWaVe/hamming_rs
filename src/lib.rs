@@ -58,9 +58,9 @@ pub fn distance_faster(x: &[u8], y: &[u8]) -> u64 {
 /// # Examples
 /// ```
 /// use hamming_rs::distance;
-/// let x: [u8] = [0, 1, 2, 3, 4];
-/// let y: [u8] = [0, 1, 3, 2, 4];
-/// let dist = distance(x, y);
+/// let x: [u8;5] = [0, 1, 2, 3, 4];
+/// let y: [u8;5] = [0, 1, 3, 2, 4];
+/// let dist = distance(&x, &y);
 /// assert_eq!(2, dist);
 /// ```
 pub fn distance(x: &[u8], y: &[u8]) -> u64 {
@@ -84,7 +84,11 @@ pub fn weight(x: &[u8]) -> u64 {
     }
 }
 
+/// avx2 target specific functions
 pub mod lib_avx2;
+
+/// export utilies (such as cross platform aligned_alloc)
+pub mod utils;
 
 #[cfg(test)]
 pub mod lib_test;

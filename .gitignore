@@ -5,3 +5,5 @@ target/.rustc_info.json
 target/CACHEDIR.TAG
 target/package/
 Cargo.lock
+target/criterion/
+target/rls/

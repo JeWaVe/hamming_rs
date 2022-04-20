@@ -1,17 +1,14 @@
+use crate::utils;
+
 unsafe fn random_data(x: *mut u8, len: usize) {
     for i in 0..len {
         *x.add(i) = rand::random();
     }
 }
 
-// TODO: arch checks and windows version
-extern "C" {
-    fn aligned_alloc(alignment: usize, size: usize) -> *mut u8;
-}
-
 fn random_slice<'a>(size: usize) -> &'a [u8] {
     unsafe {
-        let ptr = aligned_alloc(64, size);
+        let ptr = utils::aligned_alloc(64, size);
         random_data(ptr, size);
         return std::slice::from_raw_parts(ptr, size);
     }

@@ -6,10 +6,6 @@ unsafe fn random_vector(x: *mut u8, len: usize) {
     }
 }
 
-extern "C" {
-    fn aligned_alloc(alignment: usize, size: usize) -> *mut u8;
-}
-
 fn bench_dist(c: &mut Criterion) {
     const KB: usize = 1024;
     let sizes = [
@@ -28,9 +24,9 @@ fn bench_dist(c: &mut Criterion) {
     let mut group = c.benchmark_group("distance");
     for s in sizes.iter() {
         unsafe {
-            let x = aligned_alloc(256, *s);
+            let x = hamming_rs::utils::aligned_alloc(256, *s);
             random_vector(x, *s);
-            let y = aligned_alloc(256, *s);
+            let y = hamming_rs::utils::aligned_alloc(256, *s);
             random_vector(y, *s);
             let xx = std::slice::from_raw_parts(x, *s);
             let yy = std::slice::from_raw_parts(x, *s);
@@ -63,7 +59,7 @@ fn bench_weight(c: &mut Criterion) {
     let mut group = c.benchmark_group("weight");
     for s in sizes.iter() {
         unsafe {
-            let x = aligned_alloc(256, *s);
+            let x = hamming_rs::utils::aligned_alloc(256, *s);
             random_vector(x, *s);
             let xx = std::slice::from_raw_parts(x, *s);
             group.bench_with_input(BenchmarkId::new("local", s), &xx, |b, data| {
