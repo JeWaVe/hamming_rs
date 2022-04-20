@@ -7,3 +7,4 @@ target/package/
 Cargo.lock
 target/criterion/
 target/rls/
+target/.rustdoc_fingerprint.json
