@@ -1,7 +1,7 @@
 [package]
 name = "hamming_rs"
 version = "0.2.22"
-edition = "2024"
+edition = "2021"
 authors = ["Regis Portalez <info@example.com>"]
 license = "MIT"
 keywords = ["popcount", "hamming", "avx2"]
