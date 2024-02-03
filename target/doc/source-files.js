@@ -1,3 +1,4 @@
-var N = null;var sourcesIndex = {};
-sourcesIndex["hamming_rs"] = {"name":"","files":["lib.rs","lib_avx2.rs","utils.rs"]};
+var sourcesIndex = JSON.parse('{\
+"hamming_rs":["",[],["lib.rs","lib_avx2.rs","utils.rs"]]\
+}');
 createSourceSidebar();

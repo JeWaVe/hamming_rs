@@ -24,9 +24,9 @@ fn bench_dist(c: &mut Criterion) {
     let mut group = c.benchmark_group("distance");
     for s in sizes.iter() {
         unsafe {
-            let x = hamming_rs::utils::aligned_alloc(256, *s);
+            let x = hamming_rs::utils::aligned_malloc(256, *s);
             random_vector(x, *s);
-            let y = hamming_rs::utils::aligned_alloc(256, *s);
+            let y = hamming_rs::utils::aligned_malloc(256, *s);
             random_vector(y, *s);
             let xx = std::slice::from_raw_parts(x, *s);
             let yy = std::slice::from_raw_parts(x, *s);

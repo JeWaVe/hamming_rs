@@ -6,15 +6,16 @@ extern "C" {
     fn _aligned_malloc(size: usize, alignment: usize) -> *mut u8;
 }
 
-pub fn aligned_alloc(alignment: usize, size: usize) -> *mut u8 {
+#[cfg(target_os = "linux")]
+pub fn aligned_malloc(alignment: usize, size: usize) -> *mut u8 {
     unsafe {
-        if cfg!(linux) {
-            return aligned_alloc(alignment, size);
-        }
-        if cfg!(windows) {
-            return _aligned_malloc(size, alignment);
-        }
+        return aligned_alloc(alignment, size);
     }
+}
 
-    panic!("unsupported os");
+#[cfg(target_os = "windows")]
+pub fn aligned_malloc(alignment: usize, size: usize) -> *mut u8 {
+    unsafe {
+        return _aligned_malloc(size, alignment);
+    }
 }

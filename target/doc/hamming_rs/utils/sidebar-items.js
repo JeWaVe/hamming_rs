@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["aligned_alloc",""]]});
+window.SIDEBAR_ITEMS = {"fn":[["aligned_malloc",""]]};
