@@ -8,7 +8,7 @@ unsafe fn random_data(x: *mut u8, len: usize) {
 
 fn random_slice<'a>(size: usize) -> &'a [u8] {
     unsafe {
-        let ptr = utils::aligned_alloc(64, size);
+        let ptr = utils::aligned_malloc(64, size);
         random_data(ptr, size);
         return std::slice::from_raw_parts(ptr, size);
     }
