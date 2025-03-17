@@ -1,6 +1,6 @@
 [package]
 name = "hamming_rs"
-version = "0.2.22"
+version = "0.2.23"
 edition = "2021"
 authors = ["Regis Portalez <info@example.com>"]
 license = "MIT"
