@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["aligned_malloc",""]]};
+window.SIDEBAR_ITEMS = {"fn":["_aligned_alloc","aligned_malloc"]};

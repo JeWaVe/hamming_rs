@@ -4,7 +4,9 @@ use std::arch::x86_64::{
     _mm256_shuffle_epi8, _mm256_slli_epi64, _mm256_srli_epi32, _mm256_xor_si256,
 };
 
-use crate::distance_faster;
+use log::info;
+
+use crate::distance_naive;
 
 #[target_feature(enable = "avx2")]
 unsafe fn carry_save_adder(h: *mut __m256i, l: *mut __m256i, a: __m256i, b: __m256i, c: __m256i) {
@@ -174,11 +176,15 @@ pub unsafe fn distance_vect(x: &[u8], y: &[u8]) -> u64 {
     let mut accum = 0;
     let (x_head, x_mid, x_tail) = x.align_to::<__m256i>();
     let (y_head, y_mid, y_tail) = y.align_to::<__m256i>();
-    if x_head.len() != y_head.len() {
-        // TODO : warn
-        return distance_faster(x, y);
+    if x_head.len() != 0 && y_head.len() != 0 {
+        info!("memory not aligned -- performance will be degraded");
     }
-    accum += super::distance_faster(x_head, y_head);
+    if x_head.len() != y_head.len() {
+        info!("alignment differ -- performance will be degraded");
+        return distance_naive(x, y);
+    }
+
+    accum += super::distance_naive(x_head, y_head);
     let main_block_length = 16 * (x_mid.len() / 16);
     let x_ptr_avx = x_mid.as_ptr() as *const __m256i;
     let y_ptr_avx = y_mid.as_ptr() as *const __m256i;
@@ -198,7 +204,7 @@ pub unsafe fn distance_vect(x: &[u8], y: &[u8]) -> u64 {
         32 * (y_mid.len() - main_block_length) + y_tail.len(),
     );
 
-    accum += super::distance_faster(x_final, y_final);
+    accum += super::distance_naive(x_final, y_final);
 
     accum
 }
@@ -207,6 +213,9 @@ pub unsafe fn distance_vect(x: &[u8], y: &[u8]) -> u64 {
 pub unsafe fn weight_vect(x: &[u8]) -> u64 {
     let mut accum = 0;
     let (x_head, x_mid, x_tail) = x.align_to::<__m256i>();
+    if x_head.len() != 0 {
+        info!("memory not aligned -- performance will be degraded");
+    }
     accum += super::weight_naive(x_head);
     let main_block_length = 16 * (x_mid.len() / 16);
     let x_ptr_avx = x_mid.as_ptr() as *const __m256i;

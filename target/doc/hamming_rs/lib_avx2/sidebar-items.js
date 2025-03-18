@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["distance_vect",""],["weight_vect",""]]};
+window.SIDEBAR_ITEMS = {"fn":["distance_vect","weight_vect"]};

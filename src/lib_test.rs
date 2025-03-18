@@ -32,42 +32,6 @@ pub fn test_weight_naive() {
 }
 
 #[test]
-pub fn test_dist_faster() {
-    let x = random_slice(12);
-    let y = random_slice(12);
-    let a = super::distance_faster(&x, &y);
-    let b = hamming::distance(&x, &y);
-    assert_eq!(a, b);
-}
-
-#[test]
-pub fn test_dist_faster_2() {
-    let x = random_slice(16);
-    let y = random_slice(16);
-    let a = super::distance_faster(&x, &y);
-    let b = hamming::distance(&x, &y);
-    assert_eq!(a, b);
-}
-
-#[test]
-pub fn test_dist_faster_3() {
-    let x = random_slice(4);
-    let y = random_slice(4);
-    let a = super::distance_faster(&x, &y);
-    let b = hamming::distance(&x, &y);
-    assert_eq!(a, b);
-}
-
-#[test]
-pub fn test_dist_faster_4() {
-    let x = random_slice(32);
-    let y = random_slice(32);
-    let a = super::distance_faster(&x, &y);
-    let b = hamming::distance(&x, &y);
-    assert_eq!(a, b);
-}
-
-#[test]
 pub fn test_dist_avx() {
     let x = random_slice(1024);
     let y = random_slice(1024);

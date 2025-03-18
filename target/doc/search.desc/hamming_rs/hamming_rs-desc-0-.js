@@ -1,0 +1,1 @@
+searchState.loadedDescShard("hamming_rs", 0, "Computes hamming distance Assumes x and y have same memory …\nComputes hamming distance (naive version) copied from …\navx2 target specific functions\nexport utilies (such as cross platform aligned_alloc)\nComputes hamming weight Uses highly optimized avx2 version …\ncomputes hamming weight (naive version)")
