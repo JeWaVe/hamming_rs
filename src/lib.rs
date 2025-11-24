@@ -1,3 +1,4 @@
+#[cfg(target_arch = "x86_64")]
 use std::is_x86_feature_detected;
 
 /// Computes hamming distance (naive version)
@@ -60,28 +61,32 @@ pub fn weight_naive(x: &[u8]) -> u64 {
 /// ```
 pub fn distance(x: &[u8], y: &[u8]) -> u64 {
     assert_eq!(x.len(), y.len());
+    #[cfg(target_arch = "x86_64")]
     unsafe {
         // from benchmarks, it seems avx2 implementation is slower than naive for very small vectors
         if is_x86_feature_detected!("avx2") && x.len() >= 1024 {
             return lib_avx2::distance_vect(x, y);
         }
-
-        distance_naive(x, y)
     }
+
+    distance_naive(x, y)
 }
 
 /// Computes hamming weight  
 /// Uses highly optimized avx2 version if available
 pub fn weight(x: &[u8]) -> u64 {
-    unsafe {
+    #[cfg(target_arch = "x86_64")]
+    unsafe {  
         if is_x86_feature_detected!("avx2") {
             return lib_avx2::weight_vect(x);
         }
-        weight_naive(x)
     }
+
+    weight_naive(x)
 }
 
 /// avx2 target specific functions
+#[cfg(target_arch = "x86_64")]
 pub mod lib_avx2;
 
 /// export utilies (such as cross platform aligned_alloc)

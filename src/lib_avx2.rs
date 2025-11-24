@@ -8,6 +8,7 @@ use log::info;
 
 use crate::distance_naive;
 
+#[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx2")]
 unsafe fn carry_save_adder(h: *mut __m256i, l: *mut __m256i, a: __m256i, b: __m256i, c: __m256i) {
     let u = _mm256_xor_si256(a, b);
@@ -15,6 +16,7 @@ unsafe fn carry_save_adder(h: *mut __m256i, l: *mut __m256i, a: __m256i, b: __m2
     *l = _mm256_xor_si256(u, c);
 }
 
+#[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx2")]
 unsafe fn count(v: __m256i) -> __m256i {
     let lookup = _mm256_setr_epi8(
@@ -30,6 +32,7 @@ unsafe fn count(v: __m256i) -> __m256i {
     _mm256_sad_epu8(total, _mm256_setzero_si256())
 }
 
+#[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx2")]
 unsafe fn avx2_harvey_seal_popcnt(x: *const __m256i, size: usize) -> u64 {
     let mut total = _mm256_setzero_si256();
@@ -76,6 +79,7 @@ unsafe fn avx2_harvey_seal_popcnt(x: *const __m256i, size: usize) -> u64 {
         + _mm256_extract_epi64(total, 3)) as u64
 }
 
+#[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx2")]
 unsafe fn avx2_harvey_seal_dist(x: *const __m256i, y: *const __m256i, size: usize) -> u64 {
     let mut total = _mm256_setzero_si256();
@@ -170,6 +174,7 @@ unsafe fn avx2_harvey_seal_dist(x: *const __m256i, y: *const __m256i, size: usiz
         + _mm256_extract_epi64(total, 3)) as u64
 }
 
+#[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx2")]
 pub unsafe fn distance_vect(x: &[u8], y: &[u8]) -> u64 {
     assert_eq!(x.len(), y.len());
@@ -209,6 +214,7 @@ pub unsafe fn distance_vect(x: &[u8], y: &[u8]) -> u64 {
     accum
 }
 
+#[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx2")]
 pub unsafe fn weight_vect(x: &[u8]) -> u64 {
     let mut accum = 0;
